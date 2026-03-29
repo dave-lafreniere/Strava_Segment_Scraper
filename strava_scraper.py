@@ -17,9 +17,11 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 import time
 import os
 import shutil
+import random
 
 # -------------------------------------------------------
 # CONFIG
@@ -50,7 +52,7 @@ TOP_N = 10
 POINTS_GRAND_PRIX = {1: 25, 2: 18, 3: 15, 4: 12, 5: 10, 6: 8, 7: 6, 8: 4, 9: 2, 10: 1}
 POINTS_SPRINT     = {1: 8, 2: 7, 3: 6, 4: 5, 5: 4, 6: 3, 7: 2, 8: 1}
 
-CHROMEDRIVER_PATH = r"C:\Users\dlafr\Documents\chromedriver.exe"
+CHROMEDRIVER_PATH = os.path.join(os.path.dirname(__file__), "chromedriver.exe")
 TEMP_PROFILE      = r"C:\Users\dlafr\AppData\Local\Temp\strava_fresh_profile"
 
 
@@ -68,15 +70,37 @@ def create_driver():
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--start-maximized")
-    options.add_argument("--remote-debugging-port=9222")
     options.add_argument("--disable-extensions")
+    
+    # Add realistic User-Agent
+    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+    
+    # Additional stealth options
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option("useAutomationExtension", False)
-
+    options.add_argument("--disable-gpu-sandbox")
+    
     print("🔧 Launching Chrome...")
     service = Service(CHROMEDRIVER_PATH)
     driver = webdriver.Chrome(service=service, options=options)
+    
+    # Inject anti-webdriver detection scripts
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+    driver.execute_script("Object.defineProperty(navigator, 'plugins', {get: () => [1, 2, 3, 4, 5]})")
+    driver.execute_script("Object.defineProperty(navigator, 'languages', {get: () => ['en-US', 'en']})")
+    driver.execute_script("""
+        window.chrome = {
+            runtime: {}
+        };
+    """)
+    driver.execute_script("""
+        Object.defineProperty(navigator, 'permissions', {
+            get: () => ({
+                query: () => Promise.resolve({ state: Notification.permission })
+            })
+        });
+    """)
+    
     return driver
 
 
@@ -125,7 +149,10 @@ def scrape_leaderboard(driver, segment_id, gender="M", top_n=10):
     url = f"https://www.strava.com/segments/{segment_id}?gender={gender}"
     print(f"\n📊 Loading {'Men' if gender == 'M' else 'Women'} leaderboard for segment {segment_id}...")
     driver.get(url)
-    time.sleep(3)
+    time.sleep(4)  # Increased from 3 to 4 seconds
+    
+    # Add random-like delay to avoid detection
+    time.sleep(random.uniform(1, 2))
 
     # ---- Step 1: Check sidebar to see if anyone of this gender has completed the segment ----
     sidebar = get_sidebar_data(driver)
@@ -339,6 +366,9 @@ if __name__ == "__main__":
                         if name not in comp_detail:
                             comp_detail[name] = []
                         comp_detail[name].append((seg_name, None, comp_pts))
+            
+            # Add delay between segments to avoid rate limiting
+            time.sleep(random.uniform(3, 5))
 
         # Ask if user wants detailed breakdown
         print()
