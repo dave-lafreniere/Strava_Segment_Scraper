@@ -27,25 +27,25 @@ import random
 # CONFIG
 # -------------------------------------------------------
 SEGMENT_IDS = [
-    40771040,
-    40763904,
-    40748016,
-    40727198,
-    40728144,
-    40727487,
-    40721288,
-    40674615,
-    40668331,
-    40701714,
-    40679327,
-    40665540,
-    40632958,
-    40631617,
-    40620316,
-    40617999,
-    40616232,
-    40612877,
-    40620055,
+    40771040,   # Nickerson Grand Prix
+    40763904,   # Philip Keyes Memorial Sprint
+    40748016,   # Badland Grand Prix
+    40727198,   # Mashpee River Grand Prix
+    40728144,   # Greenough Grand Prix
+    40727487,   # WBCA Grand Prix
+    40721288,   # Sandy Neck Grand Prix
+    #40674615,   # Truro Sprint
+    #40668331,   # Higgins Crowell Grand Prix
+    40701714,   # Four Ponds Grand Prix
+    40679327,   # Otis Grand Prix
+    #40665540,   # Shawme-Crowell Grand Prix
+    #40632958,   # Coonamessett Grand Prix
+    40631617,   # Long Pond Grand Prix
+    40620316,   # WBCA Sprint
+    #40620055,   # Wellfleet Grand Prix
+    40617999,   # Maple Swamp Grand Prix
+    40616232,   # CCCC / OJL Grand Prix
+    40612877,   # Round Hill Sprint
 ]
 GENDERS = ["M", "F"]   # Fetch both Men and Women leaderboards
 TOP_N = 10
