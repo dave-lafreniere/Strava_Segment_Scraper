@@ -55,7 +55,6 @@ SEGMENT_IDS = [
     40617999,   # Maple Swamp Grand Prix
     40616232,   # CCCC / OJL Grand Prix
     40612877,   # Round Hill Sprint
-    40620055,
 ]
 GENDERS           = ["M", "F"]
 TOP_N             = 10
